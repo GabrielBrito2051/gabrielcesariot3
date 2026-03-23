@@ -36,4 +36,25 @@ Registro buscar_registro(char* n_dir, char* n_buck, int chave_buscada);
 /// @return Retorna 1 se o arquivo foi removido e 0 caso contrario
 int remover_registro(char* n_dir, char* n_buck, int chave_removida);
 
+/// @brief Cria um novo registro
+/// @param chave A chave do registro
+/// @param dado O dado contido no registro
+/// @return Retorna o registro criado
+Registro criar_registro(int chave, char* dado);
+
+/// @brief Modifica o dado d um registro
+/// @param reg O registro que sera modificado
+/// @param dado O dado que sera inserido no registro
+void modificar_registro(Registro reg, char* dado);
+
+/// @brief Pega a chave do registro
+/// @param reg O registro que teera sua chave pega
+/// @return Retorna a chave do registro
+int get_chave_registro(Registro reg);
+
+/// @brief Pega o dado de um registro
+/// @param reg O registro que tera seu dado pego
+/// @return Retorna o dado do registro
+char* get_dado_reg(Registro reg);
+
 #endif
