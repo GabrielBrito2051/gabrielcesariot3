@@ -1,6 +1,7 @@
 #include "../unity/unity.h"
 #include "../include/hashfile.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 char* dir_teste = "dir_teste.dat";
