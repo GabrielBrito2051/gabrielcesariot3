@@ -4,14 +4,19 @@
 #include <stdlib.h>
 
 typedef struct {
-    int cpf, morador;
-    char* nome[100], sobrenome[100], data[10];
+    int morador;
+    char nome[100], sobrenome[100], data[10], cpf[15];
     char sexo;
 }pessoa;
 
-Pessoa nascimento(int cpf, char* nome, char* sobrenome, char sexo, char* data){
+typedef struct {
+    int num;
+    char face, compl[50], cpf[15], cep[10];
+}morador;
+
+Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data){
     pessoa* novo = malloc(sizeof(pessoa));
-    novo->cpf = cpf;
+    strcpy(novo->cpf,cpf);
     strcpy(novo->nome,nome);
     strcpy(novo->sobrenome,sobrenome);
     novo->sexo = sexo;
@@ -21,7 +26,7 @@ Pessoa nascimento(int cpf, char* nome, char* sobrenome, char sexo, char* data){
     return novo;
 }
 
-int getCpf(Pessoa p){
+char* getCpf(Pessoa p){
     return ((pessoa*)p)->cpf;
 }
 
@@ -45,8 +50,8 @@ int getMorador(Pessoa p){
     return ((pessoa*)p)->morador;
 }
 
-void setCpf(Pessoa p, int cpf){
-    ((pessoa*)p)->cpf = cpf;
+void setCpf(Pessoa p, char* cpf){
+    strcpy(((pessoa*)p)->cpf,cpf);
 }
 
 void setNome(Pessoa p, char* nome){
@@ -67,4 +72,5 @@ void setMorador(Pessoa p, int morador){
 
 int rip(Pessoa p){
     free((pessoa*)p);
+    return (p==NULL) ? 1:0;
 }

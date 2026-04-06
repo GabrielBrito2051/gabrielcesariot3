@@ -18,12 +18,12 @@ typedef void* Pessoa;
 /// @param sexo O sexo da pessoa
 /// @param data A data de nascimento da pessoa
 /// @return Retorna um ponteiro para a pessoa criada
-Pessoa nascimento(int cpf, char* nome, char* sobrenome, char sexo, char* data);
+Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data);
 
 /// @brief Pega o cpf de uma pessoa
 /// @param p A pessoa
 /// @return Retorna um inteiro com cpf da pessoa
-int getCpf(Pessoa p);
+char* getCpf(Pessoa p);
 
 /// @brief Obtem o nome de uma pessoa
 /// @param p A pessoa
@@ -53,7 +53,7 @@ int getMorador(Pessoa p);
 /// @brief Define o cpf de uma pessoa
 /// @param p A pessoa
 /// @param cpf O novo cpf da pessoa
-void setCpf(Pessoa p, int cpf);
+void setCpf(Pessoa p, char* cpf);
 
 /// @brief Define o nome de uma pessoa
 /// @param p A pessoa
