@@ -23,7 +23,7 @@ char* getCpfMorador(Morador m){
     return ((morador*)m)->cpf;
 }
 
-char* getCep(Morador m){
+char* getCepMorador(Morador m){
     return ((morador*)m)->cep;
 }
 
@@ -43,7 +43,7 @@ void setCpfMorador(Morador m, char* cpf){
     strcpy(((morador*)m)->cpf,cpf);
 }
 
-void setCep(Morador m, char* cep){
+void setCepMorador(Morador m, char* cep){
     strcpy(((morador*)m)->cep,cep);
 }
 

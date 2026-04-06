@@ -28,7 +28,7 @@ char* getCpfMorador(Morador m);
 /// @brief Obtem o cep de um morador
 /// @param m O morador
 /// @return Retorna uma string contendo o cep do morador
-char* getCep(Morador m);
+char* getCepMorador(Morador m);
 
 /// @brief Obtem a face de um morador
 /// @param m O morador
@@ -53,7 +53,7 @@ void setCpfMorador(Morador m, char* cpf);
 /// @brief Define o cep de um morador
 /// @param m O morador
 /// @param cep String contendo o novo cep do morador
-void setCep(Morador m, char* cep);
+void setCepMorador(Morador m, char* cep);
 
 /// @brief Define a face de um morador
 /// @param m O morador
@@ -70,9 +70,9 @@ void setNumero(Morador m ,int num);
 /// @param complemento String do novo complemento do morador 
 void setComplemento(Morador m, char complemento);
 
-/// @brief Apaga todas as informacoes de um morador
+/// @brief Libera a memoria de um morador
 /// @param m O morador
-/// @return Retorna 1 caso os dados tenham sido apagador e 0 caso contrario
+/// @return Retorna 1 caso a memoria tenha sido liberada e 0 caso contrario
 int remover_morador(Morador m);
 
 #endif

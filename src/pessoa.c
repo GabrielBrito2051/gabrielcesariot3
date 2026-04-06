@@ -26,7 +26,7 @@ Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data)
     return novo;
 }
 
-char* getCpf(Pessoa p){
+char* getCpfPessoa(Pessoa p){
     return ((pessoa*)p)->cpf;
 }
 
@@ -50,7 +50,7 @@ int getMorador(Pessoa p){
     return ((pessoa*)p)->morador;
 }
 
-void setCpf(Pessoa p, char* cpf){
+void setCpfPessoa(Pessoa p, char* cpf){
     strcpy(((pessoa*)p)->cpf,cpf);
 }
 

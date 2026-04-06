@@ -23,7 +23,7 @@ Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data)
 /// @brief Pega o cpf de uma pessoa
 /// @param p A pessoa
 /// @return Retorna um inteiro com cpf da pessoa
-char* getCpf(Pessoa p);
+char* getCpfPessoa(Pessoa p);
 
 /// @brief Obtem o nome de uma pessoa
 /// @param p A pessoa
@@ -53,7 +53,7 @@ int getMorador(Pessoa p);
 /// @brief Define o cpf de uma pessoa
 /// @param p A pessoa
 /// @param cpf O novo cpf da pessoa
-void setCpf(Pessoa p, char* cpf);
+void setCpfPessoa(Pessoa p, char* cpf);
 
 /// @brief Define o nome de uma pessoa
 /// @param p A pessoa
@@ -75,9 +75,9 @@ void setSexo(Pessoa p, char sexo);
 /// @param morador 1 caso a pessoa passe a ter uma propriedade e 0 caso se torne morador de rua
 void setMorador(Pessoa p, int morador);
 
-/// @brief Deleta os dados de uma pessoa e a pessoa em si
+/// @brief Libera a memoria de uma pessoa
 /// @param p A pessoa
-/// @return Retorna 1 se foi removida com sucesso e 0 caso contrario
+/// @return Retorna 1 se a memoria foi liberada com sucesso e 0 caso contrario
 int rip(Pessoa p);
 
 #endif
