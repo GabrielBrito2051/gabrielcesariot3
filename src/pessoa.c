@@ -5,14 +5,9 @@
 
 typedef struct {
     int morador;
-    char nome[100], sobrenome[100], data[10], cpf[15];
+    char nome[100], sobrenome[100], data[12], cpf[17];
     char sexo;
 }pessoa;
-
-typedef struct {
-    int num;
-    char face, compl[50], cpf[15], cep[10];
-}morador;
 
 Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data){
     pessoa* novo = malloc(sizeof(pessoa));
@@ -70,7 +65,6 @@ void setMorador(Pessoa p, int morador){
     ((pessoa*)p)->morador = morador;
 }
 
-int rip(Pessoa p){
+void rip(Pessoa p){
     free((pessoa*)p);
-    return (p==NULL) ? 1:0;
 }

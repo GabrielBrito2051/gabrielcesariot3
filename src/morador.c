@@ -55,11 +55,10 @@ void setNumero(Morador m ,int num){
      ((morador*)m)->num = num;
 }
 
-void setComplemento(Morador m, char complemento){
+void setComplemento(Morador m, char* complemento){
     strcpy(((morador*)m)->complemento,complemento);
 }
 
-int remover_morador(Morador m){
+void remover_morador(Morador m){
     free((morador*)m);
-    return (m==NULL) ? 1:0;
 }

@@ -22,7 +22,7 @@ Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data)
 
 /// @brief Pega o cpf de uma pessoa
 /// @param p A pessoa
-/// @return Retorna um inteiro com cpf da pessoa
+/// @return Retorna uma string com o cpf da pessoa
 char* getCpfPessoa(Pessoa p);
 
 /// @brief Obtem o nome de uma pessoa
@@ -77,7 +77,6 @@ void setMorador(Pessoa p, int morador);
 
 /// @brief Libera a memoria de uma pessoa
 /// @param p A pessoa
-/// @return Retorna 1 se a memoria foi liberada com sucesso e 0 caso contrario
-int rip(Pessoa p);
+void rip(Pessoa p);
 
 #endif

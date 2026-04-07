@@ -68,11 +68,10 @@ void setNumero(Morador m ,int num);
 /// @brief Define o complemento de um morador
 /// @param m O morador
 /// @param complemento String do novo complemento do morador 
-void setComplemento(Morador m, char complemento);
+void setComplemento(Morador m, char* complemento);
 
 /// @brief Libera a memoria de um morador
 /// @param m O morador
-/// @return Retorna 1 caso a memoria tenha sido liberada e 0 caso contrario
-int remover_morador(Morador m);
+void remover_morador(Morador m);
 
 #endif
