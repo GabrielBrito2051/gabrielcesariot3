@@ -4,7 +4,7 @@
 #include <string.h>
 
 typedef struct{
-    char* cep;
+    char cep[12];
     double x, y, w, h;
 }quadra;
 
@@ -43,6 +43,30 @@ double getHQuadra(Quadra q){
     return ((quadra*)q)->h;
 }
 
+void setCepQuadra(Quadra q, char* cep){
+    strcpy(((quadra*)q)->cep,cep);
+}
+
+void setXQuadra(Quadra q, double x){
+    ((quadra*)q)->x = x;
+}
+
+void setYQuadra(Quadra q, double y){
+    ((quadra*)q)->y = y;
+}
+
+void setWQuadra(Quadra q, double w){
+    ((quadra*)q)->w = w;
+}
+
+void setHQuadra(Quadra q, double h){
+    ((quadra*)q)->h = h;
+}
+
+void remover_quadra(Quadra q){
+    free((quadra*)q);
+}
+
 Estilo criar_estilo(char* sw, char* fill, char* strk){
     estilo* novo = malloc(sizeof(estilo));
     strcpy(novo->sw,sw);
@@ -74,4 +98,8 @@ void setFill(Estilo e, char* fill){
 
 void setStrk(Estilo e, char* strk){
     strcpy(((estilo*)e)->strk,strk);
+}
+
+void removerEstilo(Estilo e){
+    free((estilo*)e);
 }

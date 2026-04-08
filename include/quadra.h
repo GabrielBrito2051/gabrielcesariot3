@@ -73,8 +73,7 @@ void setHQuadra(Quadra q, double h);
 
 /// @brief Libera a memoria de uma quadra
 /// @param q A quadra
-/// @return Retorna 1 se a memoria foi liberada com sucesso e 0 caso contrario
-int remover_quadra(Quadra q);
+void remover_quadra(Quadra q);
 
 /// @brief Cria um novo estilo para a impressao das quadras no arquivo .svg
 /// @param sw Espessura da borda da quadra
@@ -112,5 +111,9 @@ void setFill(Estilo e, char* fill);
 /// @param e O estilo
 /// @param strk String contendo o novo valor da cor de borda das quadras
 void setStrk(Estilo e, char* strk);
+
+/// @brief Libera a memoria do estilo
+/// @param e O estilo
+void removerEstilo(Estilo e);
 
 #endif
