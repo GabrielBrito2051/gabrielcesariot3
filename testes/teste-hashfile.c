@@ -1,66 +1,92 @@
-#include "../unity/unity.h"
-#include "../include/hashfile.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../unity/unity.h"
+#include "../include/hashfile.h"
 
-char* dir_teste = "dir_teste.dat";
-char* buck_teste = "buck_teste.dat";
+typedef struct {
+    char cpf[17], nome[50];
+    char sexo;
+} Pessoa;
 
-void setUp(){
-    inicializar_hashfile(dir_teste, buck_teste);
+char* NOME_BASE_TESTE = "teste_db";
+
+void setUp(void) {
+    remove("teste_db_buckets.dat"); 
+    remove("teste_db_dir.dat");
 }
 
-void tearDown(){
-    remove(dir_teste);
-    remove(buck_teste);
+void tearDown(void) {
+    remove("teste_db_buckets.dat"); 
+    remove("teste_db_dir.dat");
 }
 
-void teste_insercao_e_busca(){
-    Registro reg = criar_registro(42, "ze-mane");
+void test_inicializar_e_fechar() {
+    Hashfile hf = inicializar_hashfile((char*)NOME_BASE_TESTE, sizeof(Pessoa));
+    
+    TEST_ASSERT_NOT_NULL(hf);
+    
+    fechar_hashfile(hf);
+}
 
-    int inseriu = inserir_registro(dir_teste, buck_teste, reg);
+void test_inserir_e_buscar() {
+    Hashfile hf = inicializar_hashfile((char*)NOME_BASE_TESTE, sizeof(Pessoa));
+    
+    Pessoa inserir = {"111.222.333-44", "Milton Nascimento", 'M'};
+    char* chave = inserir.cpf;
+
+    int inseriu = inserir_registro(hf, chave, &inserir);
     TEST_ASSERT_EQUAL_INT(1, inseriu);
 
-    Registro banco = buscar_registro(dir_teste, buck_teste, 42);
+    Pessoa buscado;
+    int encontrou = buscar_registro(hf, chave, &buscado);
+    
+    TEST_ASSERT_EQUAL_INT(1, encontrou);
+    
+    TEST_ASSERT_EQUAL_STRING("111.222.333-44", buscado.cpf);
+    TEST_ASSERT_EQUAL_STRING("Milton Nascimento", buscado.nome);
+    TEST_ASSERT_EQUAL_CHAR('M', buscado.sexo);
 
-    TEST_ASSERT_NOT_NULL(banco);
-    TEST_ASSERT_EQUAL_INT(42, get_chave_registro(banco));
-    TEST_ASSERT_EQUAL_STRING("ze-mane", get_dado_reg(banco));
-
-    free(banco);
+    fechar_hashfile(hf);
 }
 
-void teste_remocao_registro(){
-    Registro reg = criar_registro(99, "estrutura-de-dados");
-    inserir_registro(dir_teste, buck_teste, reg);
+void test_buscar_registro_inexistente() {
+    Hashfile hf = inicializar_hashfile(NOME_BASE_TESTE, sizeof(Pessoa));
+    
+    Pessoa buscado;
+    int encontrou = buscar_registro(hf, "chave_fantasma", &buscado);
+    
+    TEST_ASSERT_EQUAL_INT(0, encontrou);
 
-    int removeu = remover_registro(dir_teste, buck_teste, 99);
+    fechar_hashfile(hf);
+}
+
+void test_remover_registro(void) {
+    Hashfile hf = inicializar_hashfile((char*)NOME_BASE_TESTE, sizeof(Pessoa));
+    
+    Pessoa u1 = {"222.333.444-55", "Ana banana", 10.0};
+    Pessoa u2 = {"333.444.555-66", "Mario Silva", 20.0};
+    
+    inserir_registro(hf, u1.cpf, &u1);
+    inserir_registro(hf, u2.cpf, &u2);
+
+    int removeu = remover_registro(hf, u1.cpf);
     TEST_ASSERT_EQUAL_INT(1, removeu);
 
-    Registro banco = buscar_registro(dir_teste, buck_teste, 99);
-    TEST_ASSERT_NULL(banco);
+    Pessoa buscado;
+    int encontrou_u1 = buscar_registro(hf, u1.cpf, &buscado);
+    TEST_ASSERT_EQUAL_INT(0, encontrou_u1);
+
+    fechar_hashfile(hf);
 }
 
-void teste_insercao_com_split(){
-    for(int i=0;i<40;i++){
-        Registro temp = criar_registro(i, "testando");
-        int inseriu = inserir_registro(dir_teste, buck_teste, temp);
-        TEST_ASSERT_EQUAL_INT_MESSAGE(1, inseriu, "Falha na insercao durante o for");
-    }
-    Registro banco = buscar_registro(dir_teste,buck_teste, 35);
-    TEST_ASSERT_NOT_NULL_MESSAGE(banco, "SUMIU!");
-    TEST_ASSERT_EQUAL_INT(35, get_chave_registro(banco));
-
-    if(banco) free(banco);
-}
-
-int main(){
+int main(void) {
     UNITY_BEGIN();
 
-    RUN_TEST(teste_insercao_e_busca);
-    RUN_TEST(teste_remocao_registro);
-    RUN_TEST(teste_insercao_com_split);
+    RUN_TEST(test_inicializar_e_fechar);
+    RUN_TEST(test_inserir_e_buscar);
+    RUN_TEST(test_buscar_registro_inexistente);
+    RUN_TEST(test_remover_registro);
 
     return UNITY_END();
 }

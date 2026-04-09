@@ -1,320 +1,309 @@
-#include "../include/hashfile.h"
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../include/hashfile.h"
 
-#define BUCKET_SIZE 30
-
-typedef struct{
-    int chave;
-    char dados[100];
-}registro;
+#define BUCKET_SIZE 4
+#define MAX_CHAVE 30
 
 typedef struct{
     int profundidade_local;
     int num_registros;
-    registro registros[BUCKET_SIZE];
-}bucket;
+}cabecalho;
 
 typedef struct{
+    FILE *arq_buckets;
+    FILE* arq_dir;
+    size_t tamanho_registro;
     int profundidade_global;
-    long* pont;
-}diretorio;
+    int tamanho_diretorio;
+    long *pont;
+}hashfile;
 
-int calcular_hash(int chave) {
-    unsigned int x = (unsigned int)chave;
-    
-    x = ((x >> 16) ^ x) * 0x45d9f3b;
-    x = ((x >> 16) ^ x) * 0x45d9f3b;
-    x = (x >> 16) ^ x;
-    
-    return (int)x;
+unsigned int calcular_hash(char *str) {
+    unsigned int hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
 }
 
-int obter_indice_diretorio(int chave, int prof_global) {
-    int hash = calcular_hash(chave);
+void dobrar_diretorio(hashfile *hf) {
+    int tamanho_antigo = hf->tamanho_diretorio;
     
-    int mascara = (1 << prof_global) - 1;
-    
-    return hash & mascara;
+    hf->profundidade_global++;
+    hf->tamanho_diretorio = 1 << hf->profundidade_global; 
+
+    long *novo_diretorio = malloc(hf->tamanho_diretorio * sizeof(long));
+
+    for (int i = 0; i < tamanho_antigo; i++) {
+        novo_diretorio[i] = hf->pont[i];
+        novo_diretorio[i + tamanho_antigo] = hf->pont[i]; 
+    }
+
+    free(hf->pont);
+    hf->pont = novo_diretorio;
 }
 
-void dobrar_diretorio(FILE* f_dir){
-    int prof_global;
-    fseek(f_dir, 0, SEEK_SET);
-    fread(&prof_global, sizeof(int), 1, f_dir);
+void dividir_bucket(hashfile *hf, int indice_dir) {
+    long offset_velho = hf->pont[indice_dir];
+    size_t tamanho_linha = MAX_CHAVE + hf->tamanho_registro;
 
-    int tamanho_atual = 1 << prof_global;
+    cabecalho cab_velho;
+    fseek(hf->arq_buckets, offset_velho, SEEK_SET);
+    fread(&cab_velho, sizeof(cabecalho), 1, hf->arq_buckets);
 
-    long* pont = (long*)malloc(tamanho_atual * sizeof(long));
-    fread(pont, sizeof(long), tamanho_atual, f_dir);
+    void *buffer_registros = malloc(BUCKET_SIZE * tamanho_linha);
+    fread(buffer_registros, tamanho_linha, BUCKET_SIZE, hf->arq_buckets);
 
-    prof_global++;
-    fseek(f_dir, 0, SEEK_SET);
-    fwrite(&prof_global, sizeof(int), 1, f_dir);
+    cab_velho.profundidade_local++;
+    cab_velho.num_registros = 0;
 
-    fwrite(pont, sizeof(long), tamanho_atual, f_dir);
-    fwrite(pont, sizeof(long), tamanho_atual, f_dir);
+    cabecalho cab_novo;
+    cab_novo.profundidade_local = cab_velho.profundidade_local;
+    cab_novo.num_registros = 0;
 
-    free(pont);
-}
+    fseek(hf->arq_buckets, 0, SEEK_END);
+    long offset_novo = ftell(hf->arq_buckets);
 
-void atualizar_ponteiros_diretorio(FILE *f_dir, int mascara_local, int hash_base_antigo, long offset_novo, long offset_antigo){
-    int prof_global;
-    fseek(f_dir, 0, SEEK_SET);
-    fread(&prof_global, sizeof(int), 1, f_dir);
+    int num_bits = cab_velho.profundidade_local;
+    int mascara_local = (1 << num_bits) - 1;
     
-    int tamanho_dir = 1 << prof_global;
-    long ponteiro_atual;
-    
-    for (int i = 0; i < tamanho_dir; i++) {
-        fseek(f_dir, sizeof(int) + (i * sizeof(long)), SEEK_SET);
-        fread(&ponteiro_atual, sizeof(long), 1, f_dir);
-        
-        if (ponteiro_atual == offset_antigo) {
-            
-            if ((i & mascara_local) != hash_base_antigo) {
-                fseek(f_dir, sizeof(int) + (i * sizeof(long)), SEEK_SET);
-                
-                fwrite(&offset_novo, sizeof(long), 1, f_dir);
-            }
+    int bit_diferenciador = 1 << (num_bits - 1);
+    int padrao_novo = (indice_dir & mascara_local) | bit_diferenciador;
+
+    for (int i = 0; i < hf->tamanho_diretorio; i++) {
+        if ((i & mascara_local) == padrao_novo) {
+            hf->pont[i] = offset_novo;
         }
     }
-}
 
-void dividir_bucket(FILE* f_dir, FILE* f_buck, long offset_antigo, bucket* b_antigo, registro novo_reg){
-    bucket b_novo;
-    b_novo.num_registros = 0;
-    b_novo.profundidade_local = b_antigo->profundidade_local + 1;
-    b_antigo->profundidade_local += 1;
+    void *espaco_vazio = calloc(BUCKET_SIZE, tamanho_linha);
     
-    registro todos_registros[BUCKET_SIZE + 1];
+    fseek(hf->arq_buckets, offset_velho, SEEK_SET);
+    fwrite(&cab_velho, sizeof(cabecalho), 1, hf->arq_buckets);
+    fwrite(espaco_vazio, tamanho_linha, BUCKET_SIZE, hf->arq_buckets);
+
+    fseek(hf->arq_buckets, offset_novo, SEEK_SET);
+    fwrite(&cab_novo, sizeof(cabecalho), 1, hf->arq_buckets);
+    fwrite(espaco_vazio, tamanho_linha, BUCKET_SIZE, hf->arq_buckets);
+    
+    free(espaco_vazio);
+
     for (int i = 0; i < BUCKET_SIZE; i++) {
-        todos_registros[i] = b_antigo->registros[i];
-    }
-    todos_registros[BUCKET_SIZE] = novo_reg;
-    
-    b_antigo->num_registros = 0; 
-
-    int mascara_local = (1 << b_antigo->profundidade_local) - 1;
-    
-    int hash_base_antigo = calcular_hash(todos_registros[0].chave) & mascara_local;
-
-    for (int i = 0; i < BUCKET_SIZE + 1; i++) {
-        int hash_reg = calcular_hash(todos_registros[i].chave);
-        int bits_locais = hash_reg & mascara_local;
+        char *chave_temp = (char *) (buffer_registros + (i * tamanho_linha));
+        void *dado_temp = buffer_registros + (i * tamanho_linha) + MAX_CHAVE;
         
-        if (bits_locais == hash_base_antigo) {
-            b_antigo->registros[b_antigo->num_registros++] = todos_registros[i];
-        } else {
-            b_novo.registros[b_novo.num_registros++] = todos_registros[i];
-        }
+        inserir_registro((Hashfile)hf, chave_temp, dado_temp);
     }
-    
-    fseek(f_buck, offset_antigo, SEEK_SET);
-    fwrite(b_antigo, sizeof(bucket), 1, f_buck);
-    
-    fseek(f_buck, 0, SEEK_END);
-    long offset_novo = ftell(f_buck);
-    fwrite(&b_novo, sizeof(bucket), 1, f_buck);
-    
-    atualizar_ponteiros_diretorio(f_dir, mascara_local, hash_base_antigo, offset_novo,offset_antigo);
+
+    free(buffer_registros);
 }
 
-void hashfile_split(FILE* f_dir, FILE* f_buck, long offset_bucket, bucket b, registro reg) {
-    int prof_global;
-    
-    fseek(f_dir, 0, SEEK_SET);
-    fread(&prof_global, sizeof(int), 1, f_dir);
+Hashfile inicializar_hashfile(char* nome_base, size_t tamanho_registro) {
+    hashfile* hf = malloc(sizeof(hashfile));
+    if (hf == NULL) return NULL;
 
-    if (b.profundidade_local == prof_global) {
-        printf("Profundidade local igual a global (%d). Dobrando o diretorio...\n", prof_global);
-        dobrar_diretorio(f_dir);
+    char nome_hf[256], nome_hfc[256];
+    sprintf(nome_hf, "%s.hf", nome_base);
+    sprintf(nome_hfc, "%s.hfc", nome_base);
+
+    hf->arq_buckets = fopen(nome_hf, "w+b");
+    hf->arq_dir = fopen(nome_hfc, "w+b");
+
+    if (hf->arq_buckets == NULL || hf->arq_dir == NULL) {
+        free(hf);
+        return NULL;
+    }
+
+    hf->tamanho_registro = tamanho_registro;
+    hf->profundidade_global = 1;
+    hf->tamanho_diretorio = 2;
+    hf->pont = malloc(hf->tamanho_diretorio * sizeof(long));
+
+    cabecalho bucket_inicial;
+    bucket_inicial.profundidade_local = 1;
+    bucket_inicial.num_registros = 0;
+
+    long offset_bucket = 0; 
+    
+    hf->pont[0] = offset_bucket;
+    hf->pont[1] = offset_bucket;
+
+    fseek(hf->arq_buckets, offset_bucket, SEEK_SET);
+    fwrite(&bucket_inicial, sizeof(cabecalho), 1, hf->arq_buckets);
+
+    size_t tamanho_linha = MAX_CHAVE + hf->tamanho_registro;
+    void *espaco_vazio = calloc(BUCKET_SIZE, tamanho_linha);
+    
+    fwrite(espaco_vazio, tamanho_linha, BUCKET_SIZE, hf->arq_buckets);
+    free(espaco_vazio);
+
+    return (Hashfile) hf;
+}
+
+void fechar_hashfile(Hashfile hf_ptr) {
+    if (hf_ptr == NULL) return;
+
+    hashfile* hf = (hashfile *) hf_ptr;
+
+    rewind(hf->arq_dir);
+    
+    fwrite(&hf->profundidade_global, sizeof(int), 1, hf->arq_dir);
+    fwrite(&hf->tamanho_registro, sizeof(size_t), 1, hf->arq_dir);
+    fwrite(hf->pont, sizeof(long), hf->tamanho_diretorio, hf->arq_dir);
+
+    if (hf->arq_buckets) fclose(hf->arq_buckets);
+    if (hf->arq_dir) fclose(hf->arq_dir);
+    if (hf->pont) free(hf->pont);
+
+    free(hf);
+}
+
+int inserir_registro(Hashfile hf_ptr, char* chave, void* dado) {
+    hashfile *hf = (hashfile *) hf_ptr;
+    if (hf == NULL || chave == NULL || dado == NULL) return 0;
+
+    unsigned int hash_val = calcular_hash(chave);
+
+    int mascara = (1 << hf->profundidade_global) - 1;
+    int indice_dir = hash_val & mascara;
+    
+    long offset_bucket = hf->pont[indice_dir];
+
+    cabecalho cabecalho;
+    fseek(hf->arq_buckets, offset_bucket, SEEK_SET);
+    fread(&cabecalho, sizeof(cabecalho), 1, hf->arq_buckets);
+
+    size_t tamanho_linha = MAX_CHAVE + hf->tamanho_registro;
+
+    if (cabecalho.num_registros < BUCKET_SIZE) {
         
-        prof_global++; 
-    }
+        long offset_novo_registro = offset_bucket + sizeof(cabecalho) + (cabecalho.num_registros * tamanho_linha);
+        fseek(hf->arq_buckets, offset_novo_registro, SEEK_SET);
 
-    printf("Dividindo o bucket e redistribuindo os dados...\n");
-    dividir_bucket(f_dir, f_buck, offset_bucket, &b, reg);
-}
+        char buffer_chave[MAX_CHAVE] = {0};
+        strncpy(buffer_chave, chave, MAX_CHAVE - 1);
+        
+        fwrite(buffer_chave, sizeof(char), MAX_CHAVE, hf->arq_buckets);
+        fwrite(dado, hf->tamanho_registro, 1, hf->arq_buckets);
 
-void inicializar_hashfile(char* nome_dir, char* nome_buckets){
-    FILE* f_dir = fopen(nome_dir, "wb+");
-    FILE* f_buck = fopen(nome_buckets, "wb+");
+        cabecalho.num_registros++;
+        fseek(hf->arq_buckets, offset_bucket, SEEK_SET);
+        fwrite(&cabecalho, sizeof(cabecalho), 1, hf->arq_buckets);
 
-    if(!f_dir || !f_buck){
-        printf("Erro ao criar arquivos de hash\n");
-        if(f_dir) fclose(f_dir);
-        if(f_buck) fclose(f_buck);
-        return;
-    }
-
-    int prof_global = 1;
-    fwrite(&prof_global, sizeof(int), 1, f_dir);
-
-    bucket b_inicial;
-    b_inicial.profundidade_local = 1;
-    b_inicial.num_registros = 0;
-    memset(b_inicial.registros, 0, sizeof(b_inicial.registros));
-
-    long offset_inicial = 0;
-    fwrite(&b_inicial, sizeof(bucket), 1, f_buck);
-
-    fwrite(&offset_inicial, sizeof(long), 1, f_dir);
-    fwrite(&offset_inicial, sizeof(long), 1, f_dir);
-
-    fclose(f_dir);
-    fclose(f_buck);
-}
-
-int inserir_registro(char* nome_dir, char* nome_buckets, Registro reg){
-    registro* var = (registro*) reg;
-    FILE* f_dir = fopen(nome_dir, "rb+");
-    FILE* f_buck = fopen(nome_buckets, "rb+");
-
-    if(!f_dir || !f_buck){
-        printf("Nao foi possível abrir os arquivos.\n");
-        if(f_dir) fclose(f_dir);
-        if(f_buck) fclose(f_buck);
-        return 0;
-    }
-
-    int prof_global;
-    fread(&prof_global, sizeof(int), 1, f_dir);
-
-    int indice = obter_indice_diretorio(var->chave, prof_global);
-    long offset_bucket;
-
-    fseek(f_dir, sizeof(int) + (indice * sizeof(long)), SEEK_SET);
-    fread(&offset_bucket, sizeof(long), 1, f_dir);
-
-    bucket b;
-    fseek(f_buck, offset_bucket, SEEK_SET);
-    fread(&b, sizeof(bucket), 1, f_buck);
-
-    if(b.num_registros<BUCKET_SIZE){
-        b.registros[b.num_registros] = *var;
-        b.num_registros++;
-
-        fseek(f_buck, offset_bucket, SEEK_SET);
-        fwrite(&b, sizeof(bucket),  1, f_buck);
-
-        fclose(f_dir);
-        fclose(f_buck);
         return 1;
     }
 
-    printf("Bucket cheio, fazendo split");
-    hashfile_split(f_dir, f_buck, offset_bucket, b, *var);
-
-    fclose(f_dir);
-    fclose(f_buck);
-
-    return 1;
-}
-
-Registro buscar_registro(char* n_dir, char* n_buck, int chave_buscada) {
-    FILE *f_dir = fopen(n_dir, "rb");
-    FILE *f_buck = fopen(n_buck, "rb");
-
-    if (!f_dir || !f_buck) {
-        if(f_dir) fclose(f_dir);
-        if(f_buck) fclose(f_buck);
-        return NULL; 
+    if (cabecalho.profundidade_local == hf->profundidade_global) {
+        dobrar_diretorio(hf);
+        
+        mascara = (1 << hf->profundidade_global) - 1;
+        indice_dir = hash_val & mascara;
     }
 
-    int prof_global;
-    fread(&prof_global, sizeof(int), 1, f_dir);
+    dividir_bucket(hf, indice_dir);
 
-    int hash = calcular_hash(chave_buscada);
-    int mascara = (1 << prof_global) - 1;
-    int indice = hash & mascara;
-
-    long offset_bucket;
-    fseek(f_dir, sizeof(int) + (indice * sizeof(long)), SEEK_SET);
-    fread(&offset_bucket, sizeof(long), 1, f_dir);
-
-    bucket b;
-    fseek(f_buck, offset_bucket, SEEK_SET);
-    fread(&b, sizeof(bucket), 1, f_buck);
-
-    fclose(f_dir);
-    fclose(f_buck);
-
-    for (int i = 0; i < b.num_registros; i++) {
-        if (b.registros[i].chave == chave_buscada) {
-            registro *encontrado = malloc(sizeof(registro));
-            *encontrado = b.registros[i];
-            return encontrado;
-        }
-    }
-
-    return NULL; 
+    return inserir_registro(hf_ptr, chave, dado);
+    
+    return 0; 
 }
 
-int remover_registro(char* n_dir, char* n_buck, int chave_removida){
-    FILE* f_dir = fopen(n_dir, "rb+");
-    FILE* f_buck = fopen(n_buck, "rb+");
+int buscar_registro(Hashfile hf, char* chave_buscada, void* dado_retorno) {
+    if (hf == NULL || chave_buscada == NULL || dado_retorno == NULL) {
+        return 0; 
+    }
 
-    if(!f_dir || !f_buck){
-        printf("Erro ao abrir arquivos para remocao.\n");
-        if(f_dir) fclose(f_dir);
-        if(f_buck) fclose(f_buck);
+    hashfile* hf_interno = (hashfile*)hf;
+
+    unsigned int valor_hash = calcular_hash(chave_buscada);
+
+    int mascara = (1 << hf_interno->profundidade_global) - 1;
+    int indice_diretorio = valor_hash & mascara;
+
+    long offset_bucket = hf_interno->pont[indice_diretorio];
+
+    fseek(hf_interno->arq_buckets, offset_bucket, SEEK_SET);
+
+    cabecalho cab;
+    if (fread(&cab, sizeof(cabecalho), 1, hf_interno->arq_buckets) != 1) {
         return 0;
     }
 
-    int prof_global;
-    fread(&prof_global, sizeof(int), 1, f_dir);
+    char chave_lida[MAX_CHAVE];
+    
+    for (int i = 0; i < cab.num_registros; i++) {
+        fread(chave_lida, sizeof(char), MAX_CHAVE, hf_interno->arq_buckets);
 
-    int indice = obter_indice_diretorio(chave_removida, prof_global);
-    long offset_bucket;
-
-    fseek(f_dir, sizeof(int) + (indice * sizeof(long)), SEEK_SET);
-    fread(&offset_bucket, sizeof(long), 1, f_dir);
-
-    bucket b;
-    fseek(f_buck, offset_bucket, SEEK_SET);
-    fread(&b, sizeof(bucket), 1, f_buck);
-
-    int encontrou = 0;
-    for(int i = 0; i < b.num_registros; i++) {
-        if(b.registros[i].chave == chave_removida) {
-            b.registros[i] = b.registros[b.num_registros - 1];
-            b.num_registros--; 
-            encontrou = 1;
-            break;
+        if (strcmp(chave_lida, chave_buscada) == 0) {
+            fread(dado_retorno, hf_interno->tamanho_registro, 1, hf_interno->arq_buckets);
+            return 1;
+        } else {
+            fseek(hf_interno->arq_buckets, hf_interno->tamanho_registro, SEEK_CUR);
         }
     }
 
-    if (encontrou) {
-        fseek(f_buck, offset_bucket, SEEK_SET);
-        fwrite(&b, sizeof(bucket), 1, f_buck);
+    return 0;
+}
+
+int remover_registro(Hashfile hf, char* chave_removida) {
+    if (hf == NULL || chave_removida == NULL) {
+        return 0; 
     }
 
-    fclose(f_dir);
-    fclose(f_buck);
+    hashfile* hf_interno = (hashfile*)hf;
     
-    return encontrou;
-}
+    unsigned int valor_hash = calcular_hash(chave_removida);
+    int mascara = (1 << hf_interno->profundidade_global) - 1;
+    int indice_diretorio = valor_hash & mascara;
+    long offset_bucket = hf_interno->pont[indice_diretorio];
 
-Registro criar_registro(int chave, char* dado){
-    registro* reg = malloc(sizeof(registro));
-    reg->chave = chave;
-    strcpy(reg->dados,dado);
+    fseek(hf_interno->arq_buckets, offset_bucket, SEEK_SET);
+    cabecalho cab;
+    if (fread(&cab, sizeof(cabecalho), 1, hf_interno->arq_buckets) != 1) {
+        return 0;
+    }
 
-    return reg;
-}
+    char chave_lida[MAX_CHAVE];
+    long pos_registro_atual;
 
-void modificar_registro(Registro reg, char* dado){
-    registro* var = (registro*) reg;
-    strcpy(var->dados,dado);
-}
+    for (int i = 0; i < cab.num_registros; i++) {
+        pos_registro_atual = ftell(hf_interno->arq_buckets); 
+        
+        fread(chave_lida, sizeof(char), MAX_CHAVE, hf_interno->arq_buckets);
 
-int get_chave_registro(Registro reg){
-    registro* var = (registro*) reg;
-    return var->chave;
-}
+        if (strcmp(chave_lida, chave_removida) == 0) {
+            if (i < cab.num_registros - 1) {
+                
+                long pos_ultimo_registro = offset_bucket + sizeof(cabecalho) + (cab.num_registros - 1) * (MAX_CHAVE + hf_interno->tamanho_registro);
+                
+                fseek(hf_interno->arq_buckets, pos_ultimo_registro, SEEK_SET);
+                char ultima_chave[MAX_CHAVE];
+                fread(ultima_chave, sizeof(char), MAX_CHAVE, hf_interno->arq_buckets);
+                
+                void* buffer_dado = malloc(hf_interno->tamanho_registro);
+                fread(buffer_dado, hf_interno->tamanho_registro, 1, hf_interno->arq_buckets);
 
-char* get_dado_reg(Registro reg){
-    registro* var = (registro*) reg;
-    return var->dados;
+                fseek(hf_interno->arq_buckets, pos_registro_atual, SEEK_SET);
+                fwrite(ultima_chave, sizeof(char), MAX_CHAVE, hf_interno->arq_buckets);
+                fwrite(buffer_dado, hf_interno->tamanho_registro, 1, hf_interno->arq_buckets);
+                
+                free(buffer_dado);
+            }
+
+            cab.num_registros--;
+            
+            fseek(hf_interno->arq_buckets, offset_bucket, SEEK_SET);
+            fwrite(&cab, sizeof(cabecalho), 1, hf_interno->arq_buckets);
+
+            fflush(hf_interno->arq_buckets); 
+
+            return 1;
+        } else {
+            fseek(hf_interno->arq_buckets, hf_interno->tamanho_registro, SEEK_CUR);
+        }
+    }
+
+    return 0; 
 }

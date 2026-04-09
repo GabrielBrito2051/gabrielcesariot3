@@ -1,60 +1,38 @@
 #ifndef hashfile_h
 #define hashfile_h
 
-#include <stdio.h>
-#include <string.h>
+#include <stddef.h>
 
-typedef void* Registro;
-
-/*
-    Arquivo .h relacionado a estrutura de hashfile, com funcoes de inicializar, inserir e buscar um registro
-*/
+typedef void* Hashfile;
 
 /// @brief Inicializa um novo hashfile
-/// @param nome_dir O nome do diretorio
-/// @param nome_buckets O nome do bucket
-void inicializar_hashfile(char* nome_dir, char* nome_buckets);
+/// @param nome_base O nome do hashfile (sem extensao)
+/// @param tamanho_registro O tamanho da struct em bytes
+/// @return Retorna o hashfile aberto ou NULL em caso de erro
+Hashfile inicializar_hashfile(char* nome_base, size_t tam_registro);
 
-/// @brief Insere uma informacao no registro
-/// @param nome_dir O nome do diretorio
-/// @param nome_buckets O nome do bucket
-/// @param reg O registro que sera incluido no hashsfile
-/// @return Retorna 1 se o registro foi inserido com sucesso e retorna 0 caso contrario
-int inserir_registro(char* nome_dir, char* nome_buckets, Registro reg);
+/// @brief Salva os dados, fecha os arquivos e libera a memoria de um Hashfile
+/// @param hf O hashfile
+void fechar_hashfile(Hashfile hf);
 
-/// @brief Busca um determinado registro dentro do hashfile
-/// @param n_dir O nome do diretorio
-/// @param n_buck O nome do bucket
-/// @param chave_buscada A chave do registro que estamos buscando
-/// @return Retorna o registro buscado
-Registro buscar_registro(char* n_dir, char* n_buck, int chave_buscada);
+/// @brief Insere um registro em um hashfile
+/// @param hf O hashfile
+/// @param chave A string que identifica o registro
+/// @param dado Ponteiro para a struct que sera salva
+/// @return 1 se inseriu com sucesso, 0 caso contrario
+int inserir_registro(Hashfile hf, char* chave, void* dado);
 
-/// @brief Remove um registro do hashfile
-/// @param n_dir O nome do diretorio
-/// @param n_buck O nome do bucket
-/// @param chave_removida A chave do registro que sera removido
-/// @return Retorna 1 se o arquivo foi removido e 0 caso contrario
-int remover_registro(char* n_dir, char* n_buck, int chave_removida);
+/// @brief Busca um determinado registro dentro de um hashfile
+/// @param hf O hashfile
+/// @param chave_buscada A string que estamos buscando
+/// @param dado_retorno Ponteiro onde o dado encontrado sera copiado
+/// @return 1 se encontrou, 0 se nao encontrou
+int buscar_registro(Hashfile hf, char* chave_buscada, void* dado_retorno);
 
-/// @brief Cria um novo registro
-/// @param chave A chave do registro
-/// @param dado O dado contido no registro
-/// @return Retorna o registro criado
-Registro criar_registro(int chave, char* dado);
-
-/// @brief Modifica o dado d um registro
-/// @param reg O registro que sera modificado
-/// @param dado O dado que sera inserido no registro
-void modificar_registro(Registro reg, char* dado);
-
-/// @brief Pega a chave do registro
-/// @param reg O registro que teera sua chave pega
-/// @return Retorna a chave do registro
-int get_chave_registro(Registro reg);
-
-/// @brief Pega o dado de um registro
-/// @param reg O registro que tera seu dado pego
-/// @return Retorna o dado do registro
-char* get_dado_reg(Registro reg);
+/// @brief Remove um registro de um hashfile
+/// @param hf O hashfile
+/// @param chave_removida A string que será removida
+/// @return 1 se removeu com sucesso, 0 caso contrario
+int remover_registro(Hashfile hf, char* chave_removida);
 
 #endif
