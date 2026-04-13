@@ -50,6 +50,26 @@ char* getData(Pessoa p);
 /// @return Retorna 1 se a pessoa possui uma propriedade e 0 caso contrario
 int getMorador(Pessoa p);
 
+/// @brief Obtem o cep de uma pessoa
+/// @param p A pessoa
+/// @return Retorna uma string contendo o cep da pessoa
+char* getCepMorador(Pessoa p);
+
+/// @brief Obtem o numero de uma pessoa
+/// @param p A pessoa
+/// @return Retorna um int que representa o numero da pessoa
+int getNum(Pessoa p);
+
+/// @brief Obtem a face de uma pessoa
+/// @param m A pessoa
+/// @return Retorna um char de qual face a pessoa esta
+char getFace(Pessoa p);
+
+/// @brief Obtem o complemento de uma pessoa
+/// @param p A pessoa
+/// @return Retorna uma string contendo o complemento da pessoa
+char* getComplemento(Pessoa p);
+
 /// @brief Define o cpf de uma pessoa
 /// @param p A pessoa
 /// @param cpf O novo cpf da pessoa
@@ -74,6 +94,26 @@ void setSexo(Pessoa p, char sexo);
 /// @param p A pessoa
 /// @param morador 1 caso a pessoa passe a ter uma propriedade e 0 caso se torne morador de rua
 void setMorador(Pessoa p, int morador);
+
+/// @brief Define o cep de uma pessoa
+/// @param p A pessoa
+/// @param cep String contendo o novo cep da pessoa
+void setCepMorador(Pessoa p, char* cep);
+
+/// @brief Define a face de uma pessoa
+/// @param p A pessoa
+/// @param face Char da nova face da pessoa
+void setFace(Pessoa p, char face);
+
+/// @brief Define o numero da pessoa
+/// @param p A pessoa
+/// @param num Inteiro do novo numero da pessoa
+void setNumero(Pessoa p ,int num);
+
+/// @brief Define o complemento de uma pessoa
+/// @param m A pessoa
+/// @param complemento String do novo complemento da pessoa 
+void setComplemento(Pessoa p, char* complemento);
 
 /// @brief Libera a memoria de uma pessoa
 /// @param p A pessoa
