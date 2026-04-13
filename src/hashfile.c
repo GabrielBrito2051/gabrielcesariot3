@@ -204,10 +204,7 @@ int inserir_registro(Hashfile hf_ptr, char* chave, void* dado) {
     }
 
     dividir_bucket(hf, indice_dir);
-
     return inserir_registro(hf_ptr, chave, dado);
-    
-    return 0; 
 }
 
 int buscar_registro(Hashfile hf, char* chave_buscada, void* dado_retorno) {

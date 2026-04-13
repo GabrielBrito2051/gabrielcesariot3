@@ -13,7 +13,7 @@ typedef struct{
 }estilo;
 
 Quadra criar_quadra(char* cep, double x, double y, double w, double h){
-    quadra* novo = malloc(sizeof(quadra));
+    quadra* novo = calloc(1, sizeof(quadra));
     strcpy(novo->cep,cep);
     novo->x = x;
     novo->y = y;
