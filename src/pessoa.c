@@ -5,12 +5,12 @@
 
 typedef struct {
     int morador, num;
-    char nome[100], sobrenome[100], data[12], cpf[17], cep[12], complemento[20];
+    char nome[100], sobrenome[100], data[12], cpf[20], cep[16], complemento[30];
     char sexo, face;
 }pessoa;
 
 Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data){
-    pessoa* novo = malloc(sizeof(pessoa));
+    pessoa* novo = calloc(1, sizeof(pessoa));
     strcpy(novo->cpf,cpf);
     strcpy(novo->nome,nome);
     strcpy(novo->sobrenome,sobrenome);
@@ -19,7 +19,7 @@ Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data)
     novo->morador = 0;
     int num = -1;
     strcpy(novo->cep,"-1");
-    novo->face = "0";
+    novo->face = '0';
     strcpy(novo->complemento,"-1");
 
     return novo;

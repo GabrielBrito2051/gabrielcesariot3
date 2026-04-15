@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define SIZE_PESSOA 288
+
 typedef void* Pessoa;
 
 /*
