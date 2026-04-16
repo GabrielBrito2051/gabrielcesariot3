@@ -12,6 +12,12 @@ typedef struct{
     char sw[8], fill[30], strk[30];
 }estilo;
 
+typedef struct{
+    char cep[12];
+    int n_cpf;
+    char cpfs[MAX_CPF][16];
+}indicecep;
+
 Quadra criar_quadra(char* cep, double x, double y, double w, double h){
     quadra* novo = calloc(1, sizeof(quadra));
     strcpy(novo->cep,cep);
@@ -102,4 +108,38 @@ void setStrk(Estilo e, char* strk){
 
 void removerEstilo(Estilo e){
     free((estilo*)e);
+}
+
+IndiceCep criar_indice_cep(){
+    indicecep* novo = calloc(1,sizeof(indicecep));
+    novo->n_cpf = 0;
+    return novo;
+}
+
+char* get_cep_indice(IndiceCep ic){
+    return((indicecep*)ic)->cep;
+}
+
+int get_n_cpfs_indice(IndiceCep ic){
+    return((indicecep*)ic)->n_cpf;
+}
+
+char* get_cpf_indice(IndiceCep ic, int indice){
+    return((indicecep*)ic)->cpfs[indice];
+}
+
+void set_cep_indice(IndiceCep ic, char* cep){
+    strcpy(((indicecep*)ic)->cep,cep);
+}
+
+void set_n_cpfs_indice(IndiceCep ic, int n_cpfs){
+    ((indicecep*)ic)->n_cpf = n_cpfs;
+}
+
+void set_cpf_indice(IndiceCep ic, char* cpf, int indice){
+    strcpy(((indicecep*)ic)->cpfs[indice], cpf);
+}
+
+void free_indice_cep(IndiceCep ic){
+    free((indicecep*)ic);
 }

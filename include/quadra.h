@@ -6,9 +6,11 @@
 #include <stdlib.h>
 
 #define SIZE_QUADRA 48
+#define MAX_CPF 512
 
 typedef void* Quadra;
 typedef void* Estilo;
+typedef void* IndiceCep;
 
 /*
 
@@ -117,5 +119,45 @@ void setStrk(Estilo e, char* strk);
 /// @brief Libera a memoria do estilo
 /// @param e O estilo
 void removerEstilo(Estilo e);
+
+/// @brief Cria um novo indice de ceps
+/// @return Retorna o ponteiro para indice de ceps
+IndiceCep criar_indice_cep();
+
+/// @brief Obtem qual cep o indice esta armazenando
+/// @param ic O indice de ceps
+/// @return Retorna uma string com o cep que esta sendo armazenado
+char* get_cep_indice(IndiceCep ic);
+
+/// @brief Obtem o numero de cpfs em um determinado cep
+/// @param ic O indice de ceps
+/// @return Retorna o numero de cpfs
+int get_n_cpfs_indice(IndiceCep ic);
+
+/// @brief Obtem o cpf de um determinado elemento de um indice de ceps
+/// @param ic O indice de ceps
+/// @param indice A posicao do elemento que esta sendo buscado
+/// @return Retorna a string com o cpf daquele elemento naquele cep
+char* get_cpf_indice(IndiceCep ic, int indice);
+
+/// @brief Define qual cep esta sendo armazenado pelo indice
+/// @param ic O indice de ceps
+/// @param cep String contendo o cep armazenado
+void set_cep_indice(IndiceCep ic, char* cep);
+
+/// @brief Define o numero de cpfs armazenados por um indice de ceps
+/// @param ic O indice de ceps
+/// @param n_cpfs O numero de cpfs no indice de ceps
+void set_n_cpfs_indice(IndiceCep ic, int n_cpfs);
+
+/// @brief Define o cpf de um elemento do indice de ceps
+/// @param ic O indice de ceps
+/// @param cpf O cpf do elemento
+/// @param indice A posicao do elemento
+void set_cpf_indice(IndiceCep ic, char* cpf, int indice);
+
+/// @brief Libera a memoria de um indice de ceps
+/// @param ic O indice de ceps
+void free_indice_cep(IndiceCep ic);
 
 #endif

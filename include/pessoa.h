@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define SIZE_PESSOA 288
+#define SIZE_PESSOA 284
 
 typedef void* Pessoa;
 

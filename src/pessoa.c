@@ -5,8 +5,8 @@
 
 typedef struct {
     int morador, num;
-    char nome[100], sobrenome[100], data[12], cpf[20], cep[16], complemento[30];
-    char sexo, face;
+    char nome[100], sobrenome[100], data[12], cpf[20], cep[12], complemento[30];
+    char sexo, face; 
 }pessoa;
 
 Pessoa nascimento(char* cpf, char* nome, char* sobrenome, char sexo, char* data){
