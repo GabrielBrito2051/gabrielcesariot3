@@ -3,10 +3,31 @@
 #include <stdlib.h>
 #include "../include/pm.h"
 #include "../include/hashfile.h"
+#include "../include/quadra.h"
 
 #define tamLinha 256
 
-void lePm(FILE* pm, Hashfile hf_pessoa){
+void inserir_morador_no_cep(Hashfile hf_ceps, char* cep_alvo, char* cpf_novo, FILE* txt){
+    IndiceCep temp = criar_indice_cep();
+    if(buscar_registro(hf_ceps, cep_alvo, temp)){
+        if(get_n_cpfs_indice(temp)<MAX_CPF){
+            set_cpf_indice(temp, cpf_novo, get_n_cpfs_indice(temp));
+            set_n_cpfs_indice(temp, get_n_cpfs_indice(temp)+1);
+            remover_registro(hf_ceps, cep_alvo);
+            inserir_registro(hf_ceps, cep_alvo, temp);
+        }else{
+            fprintf(txt, "A quadra %s esta cheia!", get_cep_indice(temp));
+        }
+    }else{
+        set_cep_indice(temp, cep_alvo);
+        set_n_cpfs_indice(temp, 1);
+        set_cpf_indice(temp, cpf_novo, 0);
+        inserir_registro(hf_ceps, cep_alvo, temp);
+    }
+    free_indice_cep(temp);
+}
+
+void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt){
     char* linhaPm = malloc(tamLinha);
     int morador, num;
     char nome[100], sobrenome[100], data[12], cpf[20], cep[16], complemento[30];
@@ -36,6 +57,7 @@ void lePm(FILE* pm, Hashfile hf_pessoa){
                 setNumero(p, num);
                 setComplemento(p, complemento);
                 inserir_registro(hf_pessoa, cpf, p);
+                inserir_morador_no_cep(hf_ceps, cep, cpf, txt);
             }
             rip(p);
         }
