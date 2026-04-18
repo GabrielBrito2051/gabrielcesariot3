@@ -69,7 +69,7 @@ void setHQuadra(Quadra q, double h){
     ((quadra*)q)->h = h;
 }
 
-void remover_quadra(Quadra q){
+void liberar_quadra(Quadra q){
     free((quadra*)q);
 }
 

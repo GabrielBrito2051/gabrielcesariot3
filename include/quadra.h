@@ -77,7 +77,7 @@ void setHQuadra(Quadra q, double h);
 
 /// @brief Libera a memoria de uma quadra
 /// @param q A quadra
-void remover_quadra(Quadra q);
+void liberar_quadra(Quadra q);
 
 /// @brief Cria um novo estilo para a impressao das quadras no arquivo .svg
 /// @param sw Espessura da borda da quadra

@@ -18,7 +18,7 @@ void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts){
             if(!inserir_registro(hf_quadra, getCepQuadra(q), q)){
                 printf("Falha ao inserir registro no hashfile");
             }
-            remover_quadra(q);
+            liberar_quadra(q);
         }
         else if(strcmp(func, "cq")==0){
             sscanf(linhaGeo, "%*s %s %s %s", sw, fill, strk);
