@@ -27,7 +27,7 @@ void inserir_morador_no_cep(Hashfile hf_ceps, char* cep_alvo, char* cpf_novo, FI
     free_indice_cep(temp);
 }
 
-void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt){
+void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt, int* total_hab, int* total_mor, int* total_hom, int* total_mul, int* mor_hom, int* mor_mul){
     char* linhaPm = malloc(tamLinha);
     int morador, num;
     char nome[100], sobrenome[100], data[12], cpf[20], cep[16], complemento[30];
@@ -40,8 +40,15 @@ void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt){
             Pessoa p = nascimento(cpf, nome, sobrenome, sexo, data);
             if(!inserir_registro(hf_pessoa, cpf, p)){
                 printf("Falha ao inserir uma pessoa no hashfile");
+                return;
+            }
+            if(getSexo(p)=='H'){
+                *total_hom++;
+            }else{
+                *total_mul++;
             }
             rip(p);
+            *total_hab++;
         }
         else if(func=='m'){
             sscanf(linhaPm, "%*s %s %s %c %d %s", cpf, cep, &face, &num, complemento);
@@ -59,7 +66,13 @@ void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt){
                 inserir_registro(hf_pessoa, cpf, p);
                 inserir_morador_no_cep(hf_ceps, cep, cpf, txt);
             }
+            if(getSexo(p)=='H'){
+                mor_hom++;
+            }else{
+                mor_mul++;
+            }
             rip(p);
+            total_mor++;
         }
     }
     free(linhaPm);
