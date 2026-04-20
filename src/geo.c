@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include "../include/geo.h"
 #include "../include/hashfile.h"
+#include "../include/criarSvg.h"
 
 #define tamLinha 256
 
-void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts){
+void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts, FILE* svg){
     char* linhaGeo = malloc(tamLinha);
     char cep[12], sw[8], fill[30], strk[30], func[3];
     double x, y, w, h;
@@ -18,6 +19,7 @@ void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts){
             if(!inserir_registro(hf_quadra, getCepQuadra(q), q)){
                 printf("Falha ao inserir registro no hashfile");
             }
+            insere_quadra_svg(svg, q, ts);
             liberar_quadra(q);
         }
         else if(strcmp(func, "cq")==0){

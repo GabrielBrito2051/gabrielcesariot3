@@ -29,7 +29,7 @@ void inserir_morador_no_cep(Hashfile hf_ceps, char* cep_alvo, char* cpf_novo, FI
 
 void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt, int* total_hab, int* total_mor, int* total_hom, int* total_mul, int* mor_hom, int* mor_mul){
     char* linhaPm = malloc(tamLinha);
-    int morador, num;
+    int num;
     char nome[100], sobrenome[100], data[12], cpf[20], cep[16], complemento[30];
     char sexo, face;
     char func;
@@ -67,12 +67,12 @@ void lePm(FILE* pm, Hashfile hf_pessoa, Hashfile hf_ceps, FILE* txt, int* total_
                 inserir_morador_no_cep(hf_ceps, cep, cpf, txt);
             }
             if(getSexo(p)=='H'){
-                mor_hom++;
+                *mor_hom++;
             }else{
-                mor_mul++;
+                *mor_mul++;
             }
             rip(p);
-            total_mor++;
+            *total_mor++;
         }
     }
     free(linhaPm);

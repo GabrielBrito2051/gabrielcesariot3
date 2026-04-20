@@ -38,7 +38,7 @@ void pessoas_quadra(Hashfile hf_ceps, Hashfile hf_pessoa, Hashfile hf_quadra, ch
     IndiceCep procurado = criar_indice_cep();
     Pessoa temp = malloc(SIZE_PESSOA);
     Quadra q = malloc(SIZE_QUADRA);
-    int N=0, S=0, E=0, W=0, total=0;
+    int N=0, S=0, E=0, W=0;
     if(buscar_registro(hf_ceps, cep, procurado)){
         for(int i=0;i<get_n_cpfs_indice(procurado);i++){
             char* cpf_morador = get_cpf_indice(procurado, i);
@@ -98,7 +98,7 @@ Pessoa rip_pessoa(Hashfile hf_pessoa, Hashfile hf_ceps, Hashfile hf_quadra, char
     return morta;
 }
 
-Pessoa mud_pessoa(Hashfile hf_pessoa, Hashfile hf_ceps, char* cpf, char* cep, char face, int num, char complemento){
+Pessoa mud_pessoa(Hashfile hf_pessoa, Hashfile hf_ceps, char* cpf, char* cep, char face, int num, char* complemento){
     Pessoa mudada = malloc(SIZE_PESSOA);
     if(buscar_registro(hf_pessoa, cpf, mudada)){
         char cep_antigo[12];
@@ -170,15 +170,15 @@ void leQry(FILE* qry, Hashfile hf_quadra, Hashfile hf_pessoa, Hashfile hf_ceps, 
         }
         else if(strcmp(func,"censo")==0){
             int ts = *total_hab - *total_mor;
-            double pmh, phh, phm, pmh, pmm, psh, psm;
-            pmh = (double)*total_mor / (double)*total_hab * 100;
+            double mph, phh, phm, pmh, pmm, psh, psm;
+            mph = (double)*total_mor / (double)*total_hab * 100;
             phh = (double)*total_hom / (double)*total_hab *100;
             phm = (double)*total_mul / (double)*total_hab * 100;
             pmh = (double)*mor_hom / (double)*total_hab * 100;
             pmm = (double)*mor_mul / (double)*total_hab * 100;
             psh = ((double)(*total_hom - *mor_hom)) / (double)*total_hab * 100;
             psm = ((double)(*total_mul - *mor_mul)) / (double)*total_hab * 100;
-            print_censo_txt(txt, *total_hab, *total_mor, pmh, *total_hom, *total_mul, phh, phm, pmh, pmm, ts, psh, psm);
+            print_censo_txt(txt, *total_hab, *total_mor, mph, *total_hom, *total_mor, phh, phm, pmh, pmm, ts, psh, psm);
         }
         else if(strcmp(func,"h?")==0){
             sscanf(linhaQry, "%*s %s", cpf);
@@ -204,19 +204,19 @@ void leQry(FILE* qry, Hashfile hf_quadra, Hashfile hf_pessoa, Hashfile hf_ceps, 
             sscanf(linhaQry, "%*s %s",cpf);
             Pessoa morta = rip_pessoa(hf_pessoa, hf_ceps, hf_quadra,  cpf, svg, txt);
             if(getSexo(morta)=='M'){
-                total_hom--;
+                *total_hom--;
                 if(getMorador(morta)){
-                    mor_hom--;
-                    total_mor--;
+                    *mor_hom--;
+                    *total_mor--;
                 }
             }else{
-                total_mul--;
+                *total_mul--;
                 if(getMorador(morta)){
-                    mor_mul--;
-                    total_mor--;
+                    *mor_mul--;
+                    *total_mor--;
                 }
             }
-            total_hab--;
+            *total_hab--;
         }
         else if(strcmp(func,"mud")==0){
             sscanf(linhaQry,"%*s %s %s %c %d %s", cpf, cep, &face, &num, complemento);
@@ -237,9 +237,9 @@ void leQry(FILE* qry, Hashfile hf_quadra, Hashfile hf_pessoa, Hashfile hf_ceps, 
             }
             liberar_quadra(q);
             if(getSexo(despejada)=='H'){
-                mor_hom--;
+                *mor_hom--;
             }else{
-                mor_mul--;
+                *mor_mul--;
             }
             rip(despejada);
             *total_mor--;

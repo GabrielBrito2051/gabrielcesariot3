@@ -15,6 +15,7 @@
 /// @param geo Ponteiro para o arquivo geo
 /// @param hf_quadra Hashfile das quadras
 /// @param ts O estilo das quadras
-void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts);
+/// @param svg Ponteiro para o arquivo svg
+void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts, FILE* svg);
 
 #endif
