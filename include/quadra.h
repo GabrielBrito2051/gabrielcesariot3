@@ -7,6 +7,7 @@
 
 #define SIZE_QUADRA 48
 #define MAX_CPF 512
+#define SIZE_INDICE 8208
 
 typedef void* Quadra;
 typedef void* Estilo;

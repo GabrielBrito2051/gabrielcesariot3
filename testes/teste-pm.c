@@ -3,23 +3,31 @@
 #include <string.h>
 #include "../unity/unity.h"
 #include "../include/pm.h"
+#include "../include/quadra.h"
 #include "../include/hashfile.h"
 
-Hashfile hf = NULL;
+Hashfile hf= NULL;
+Hashfile hf_ceps = NULL;
 FILE* pm = NULL;
+FILE* txt = NULL;
+int* total_hab, *total_mor, *total_hom, *total_mul, *mor_hom, *mor_mul;
 
-void setUp(void) {
+void setUp() {
     pm = fopen("pmteste.pm", "r");
     hf = inicializar_hashfile("pmteste", SIZE_PESSOA);
+    hf_ceps = inicializar_hashfile("indice-extra", SIZE_INDICE);
+    txt = fopen("pmteste.txt", "w");
 }
 
-void tearDown(void) {
+void tearDown() {
     fclose(pm);
+    fclose(txt);
+    fechar_hashfile(hf_ceps);
     fechar_hashfile(hf);
 }
 
 void test_lePm() {
-    lePm(pm, hf);
+    lePm(pm, hf, hf_ceps, txt, total_hab, total_mor, total_hom, total_mul, mor_hom, mor_mul);
 
     Pessoa p = malloc(SIZE_PESSOA);
     int encontrou = buscar_registro(hf, "000.004.271-44", p);

@@ -178,6 +178,7 @@ void leQry(FILE* qry, Hashfile hf_quadra, Hashfile hf_pessoa, Hashfile hf_ceps, 
             pmm = (double)*mor_mul / (double)*total_hab * 100;
             psh = ((double)(*total_hom - *mor_hom)) / (double)*total_hab * 100;
             psm = ((double)(*total_mul - *mor_mul)) / (double)*total_hab * 100;
+            print_censo_txt(txt, *total_hab, *total_mor, pmh, *total_hom, *total_mul, phh, phm, pmh, pmm, ts, psh, psm);
         }
         else if(strcmp(func,"h?")==0){
             sscanf(linhaQry, "%*s %s", cpf);
