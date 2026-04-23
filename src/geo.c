@@ -7,7 +7,7 @@
 
 #define tamLinha 256
 
-void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts, FILE* svg){
+void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts, FILE* svg, int* max_x, int* max_y){
     char* linhaGeo = malloc(tamLinha);
     char cep[12], sw[8], fill[30], strk[30], func[3];
     double x, y, w, h;
@@ -20,6 +20,8 @@ void leGeo(FILE* geo, Hashfile hf_quadra, Estilo ts, FILE* svg){
                 printf("Falha ao inserir registro no hashfile");
             }
             insere_quadra_svg(svg, q, ts);
+            if(x + w > *max_x) *max_x = x+w;
+            if(y + h > *max_y) *max_y = y+h; 
             liberar_quadra(q);
         }
         else if(strcmp(func, "cq")==0){

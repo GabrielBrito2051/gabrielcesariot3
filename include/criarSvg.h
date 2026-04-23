@@ -12,7 +12,7 @@
 
 /// @brief Adiciona a tag inicial do arquivo svg
 /// @param svg Poneitro para o arquivo svg
-void startSVG(FILE* svg);
+void startSVG(FILE* svg, int max_x, int max_y);
 
 /// @brief Insere uma quadra no arquivo svg
 /// @param svg Ponteiro para o arquivo svg

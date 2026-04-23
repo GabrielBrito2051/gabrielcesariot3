@@ -1,6 +1,7 @@
 #ifndef hashfile_h
 #define hashfile_h
 
+#include "../include/quadra.h"
 #include <stddef.h>
 
 typedef void* Hashfile;
@@ -50,5 +51,15 @@ int buscar_registro(Hashfile hf, char* chave_buscada, void* dado_retorno);
 /// @param chave_removida A string que será removida
 /// @return 1 se removeu com sucesso, 0 caso contrario
 int remover_registro(Hashfile hf, char* chave_removida);
+
+/// @brief Insere todas as quadras existentes no hashfile
+/// @param hf_quadra O hashfile de quadras
+/// @param svg Ponteiro para o arquivo .svg
+/// @param e O estilo das quadras
+void desenha_quadras_svg(Hashfile* hf_quadra, FILE* svg, Estilo e);
+
+void testar_qtd_pessoas(Hashfile* hf_pessoa);
+
+void testar_qtd_quadras(Hashfile* hf_quadra);
 
 #endif

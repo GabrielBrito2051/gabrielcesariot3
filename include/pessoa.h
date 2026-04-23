@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define SIZE_PESSOA 284
+#define SIZE_PESSOA 292
 
 typedef void* Pessoa;
 
@@ -65,7 +65,7 @@ int getNum(Pessoa p);
 /// @brief Obtem a face de uma pessoa
 /// @param m A pessoa
 /// @return Retorna um char de qual face a pessoa esta
-char getFace(Pessoa p);
+char* getFace(Pessoa p);
 
 /// @brief Obtem o complemento de uma pessoa
 /// @param p A pessoa
@@ -105,7 +105,7 @@ void setCepMorador(Pessoa p, char* cep);
 /// @brief Define a face de uma pessoa
 /// @param p A pessoa
 /// @param face Char da nova face da pessoa
-void setFace(Pessoa p, char face);
+void setFace(Pessoa p, char* face);
 
 /// @brief Define o numero da pessoa
 /// @param p A pessoa

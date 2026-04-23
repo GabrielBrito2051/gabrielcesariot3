@@ -4,8 +4,8 @@
 #include "../include/quadra.h"
 #include "../include/pessoa.h"
 
-void startSVG(FILE* svg){
-    fprintf(svg,"<svg xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n");
+void startSVG(FILE* svg, int max_x, int max_y){
+    fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", max_x + 51, max_y + 51);
 }
 
 void insere_quadra_svg(FILE *svg, Quadra q, Estilo e){
@@ -28,19 +28,19 @@ void insere_censo_svg(FILE* svg, Quadra q, int N, int S, int E, int W){
 
 void insere_rip_svg(FILE* svg, Quadra q, Pessoa p){
     double x, y;
-    if(getFace(p)=='N'){
+    if(strcmp(getFace(p), "Face.N")==0){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q) + getHQuadra(q);
     }
-    else if(getFace(p)=='S'){
+    else if(strcmp(getFace(p), "Face.S")==0){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q);
     }
-    else if(getFace(p)=='L'){
+    else if(strcmp(getFace(p), "Face.L")==0){
         x = getXQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
-    else if(getFace(p)=='O'){
+    else if(strcmp(getFace(p), "Face.O")==0){
         x = getXQuadra(q) + getWQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
@@ -57,19 +57,19 @@ void insere_rip_svg(FILE* svg, Quadra q, Pessoa p){
 
 void insere_mud_svg(FILE* svg, Quadra q, Pessoa p){
     double x, y;
-    if(getFace(p)=='N'){
+    if(strcmp(getFace(p), "Face.N")==0){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q) + getHQuadra(q);
     }
-    else if(getFace(p)=='S'){
+    else if(strcmp(getFace(p), "Face.S")==0){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q);
     }
-    else if(getFace(p)=='L'){
+    else if(strcmp(getFace(p), "Face.L")==0){
         x = getXQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
-    else if(getFace(p)=='O'){
+    else if(strcmp(getFace(p), "Face.O")==0){
         x = getXQuadra(q) + getWQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
@@ -83,19 +83,19 @@ void insere_mud_svg(FILE* svg, Quadra q, Pessoa p){
 
 void insere_dspj_svg(FILE* svg, Quadra q, Pessoa p){
     double x, y;
-    if(getFace(p)=='N'){
+    if(strcmp(getFace(p), "Face.N")==0){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q) + getHQuadra(q);
     }
-    else if(getFace(p)=='S'){
+    else if(strcmp(getFace(p), "Face.S")==0){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q);
     }
-    else if(getFace(p)=='L'){
+    else if(strcmp(getFace(p), "Face.L")==0){
         x = getXQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
-    else if(getFace(p)=='O'){
+    else if(strcmp(getFace(p), "Face.O")==0){
         x = getXQuadra(q) + getWQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
