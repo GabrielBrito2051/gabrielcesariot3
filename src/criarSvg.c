@@ -17,17 +17,17 @@ void insere_quadra_svg(FILE *svg, Quadra q, Estilo e){
 }
 
 void insere_X_ancora_svg(FILE* svg, Quadra q){
-    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" style=\"font-family: 'Arial'; font-size: 24px; font-weight: bold; fill: red;\"> X </text>\n", getXQuadra(q), getYQuadra(q));
+    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" style=\"font-family: 'Arial'; font-size: 24px; font-weight: bold; fill: red;\"> X </text>\n", getXQuadra(q)-6, getYQuadra(q)+12);
 }
 
 void insere_censo_svg(FILE* svg, Quadra q, int N, int S, int E, int W){
     int total = N + S + E + W;
     char* estiloFonte = "font-family: 'Arial'; font-size: 14px; fill: black;";
     fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s font-weight: bold; fill: blue;\">%d</text>\n", getXQuadra(q) + (getWQuadra(q) / 2.0), getYQuadra(q) + (getHQuadra(q) / 2.0), estiloFonte, total);
-    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n",  getXQuadra(q) + (getWQuadra(q) / 2.0), getYQuadra(q) - 15.0, estiloFonte, S);
-    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n",  getXQuadra(q) + (getWQuadra(q) / 2.0), getYQuadra(q) + getHQuadra(q) + 15, estiloFonte, N);
-    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n", getXQuadra(q) - 15, getYQuadra(q) + (getHQuadra(q) / 2.0), estiloFonte, E);
-    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n", getXQuadra(q) + getWQuadra(q) + 15, getYQuadra(q) + (getHQuadra(q) / 2.0), estiloFonte, W);
+    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n",  getXQuadra(q) + (getWQuadra(q) / 2.0), getYQuadra(q) - 2, estiloFonte, S);
+    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n",  getXQuadra(q) + (getWQuadra(q) / 2.0), getYQuadra(q) + getHQuadra(q) + 2, estiloFonte, N);
+    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n", getXQuadra(q) - 2, getYQuadra(q) + (getHQuadra(q) / 2.0), estiloFonte, E);
+    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" text-anchor=\"middle\" dominant-baseline=\"middle\" style=\"%s\">%d</text>\n", getXQuadra(q) + getWQuadra(q) + 2, getYQuadra(q) + (getHQuadra(q) / 2.0), estiloFonte, W);
 }
 
 void insere_rip_svg(FILE* svg, Quadra q, Pessoa p){
@@ -78,11 +78,11 @@ void insere_mud_svg(FILE* svg, Quadra q, Pessoa p){
         y = getYQuadra(q) + getNum(p);
     }
 
-    x -= 7.5;
-    y -= 7.5;
+    x -= 2.5;
+    y -= 2.5;
 
-    fprintf(svg, "<rect x=\"%lf\" y=\"%lf\" width=\"15\" height=\"15\" style=\"fill:red; fill-opacity:1; stroke:red\" />\n", x, y);
-    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" style=\"font-family: 'Arial'; font-size: 1px; font-weight: bold; fill: red;\"> %s </text>\n", getXQuadra(q), getYQuadra(q), getCpfPessoa(p));
+    fprintf(svg, "<rect x=\"%lf\" y=\"%lf\" width=\"5\" height=\"5\" style=\"fill:red; fill-opacity:1; stroke:red\" />\n", x, y);
+    fprintf(svg, "<text x=\"%lf\" y=\"%lf\" style=\"font-family: 'Arial'; font-size: 2px; font-weight: bold; fill: black;\"> %s </text>\n", getXQuadra(q)-9, getYQuadra(q), getCpfPessoa(p));
 }
 
 void insere_dspj_svg(FILE* svg, Quadra q, Pessoa p){

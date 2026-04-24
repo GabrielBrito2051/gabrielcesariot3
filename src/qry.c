@@ -219,6 +219,7 @@ void leQry(FILE* qry, Hashfile hf_quadra, Hashfile hf_pessoa, Hashfile hf_ceps, 
             remover_quadra(hf_ceps, hf_pessoa, cep, txt, total_mor, mor_hom, mor_mul);
             insere_X_ancora_svg(svg, removida);
             liberar_quadra(removida);
+            remover_registro(hf_quadra, cep);
         }
         else if(strcmp(func,"pq")==0){
             sscanf(linhaQry, "%*s %s", cep);
