@@ -137,7 +137,9 @@ void set_n_cpfs_indice(IndiceCep ic, int n_cpfs){
 }
 
 void set_cpf_indice(IndiceCep ic, char* cpf, int indice){
-    strcpy(((indicecep*)ic)->cpfs[indice], cpf);
+    if(((indicecep*)ic)->cpfs[indice] != cpf){
+        strcpy(((indicecep*)ic)->cpfs[indice], cpf);
+    }
 }
 
 void free_indice_cep(IndiceCep ic){

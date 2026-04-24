@@ -46,16 +46,16 @@ void pessoas_quadra(Hashfile hf_ceps, Hashfile hf_pessoa, Hashfile hf_quadra, ch
                 char face[9];
                 strncpy(face, getFace(temp),8);
                 face[8] = '\0';
-                if(strcmp(face, "Face.N")==0){
+                if(strcmp(face, "Face.N")==0 || strcmp(face, "N")==0){
                     N++;
                 }
-                else if(strcmp(face,"Face.S")==0){
+                else if(strcmp(face,"Face.S")==0 || strcmp(face, "S")==0){
                     S++;
                 }
-                else if(strcmp(face,"Face.L")==0 || strcmp(face,"Face.E")==0){
+                else if(strcmp(face,"Face.L")==0 || strcmp(face,"Face.E")==0 || strcmp(face, "L")==0 || strcmp(face, "E")==0){
                     E++;
                 }
-                else if(strcmp(face,"Face.O")==0 || strcmp(face,"Face.W")==0){
+                else if(strcmp(face,"Face.O")==0 || strcmp(face,"Face.W")==0 || strcmp(face, "O")==0 || strcmp(face, "W")==0){
                     W++;
                 }
             }
