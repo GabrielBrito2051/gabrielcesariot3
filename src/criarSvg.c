@@ -6,7 +6,7 @@
 
 void startSVG(FILE* svg, int max_x, int max_y){
     if(max_x == 0 && max_y == 0){
-         fprintf(svg, "<svg xmlns=\"http://www.w3.org/2000/svg\">\n");
+         fprintf(svg, "<svg viewBox=\"0 0 10000 10000\" xmlns=\"http://www.w3.org/2000/svg\">\n");
     }else{
         fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", max_x + 51, max_y + 51);
     }
@@ -40,11 +40,11 @@ void insere_rip_svg(FILE* svg, Quadra q, Pessoa p){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q);
     }
-    else if(strcmp(getFace(p), "Face.L")==0 || strcmp(getFace(p), "L")==0){
+    else if(strcmp(getFace(p), "Face.L")==0 || strcmp(getFace(p), "L")==0 || strcmp(getFace(p),"Face.E")==0 || strcmp(getFace(p),"E")==0){
         x = getXQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
-    else if(strcmp(getFace(p), "Face.O")==0 || strcmp(getFace(p), "O")==0){
+    else if(strcmp(getFace(p), "Face.O")==0 || strcmp(getFace(p), "O")==0 || strcmp(getFace(p),"Face.W")==0 || strcmp(getFace(p),"W")==0){
         x = getXQuadra(q) + getWQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
@@ -69,11 +69,11 @@ void insere_mud_svg(FILE* svg, Quadra q, Pessoa p){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q);
     }
-    else if(strcmp(getFace(p), "Face.L")==0 || strcmp(getFace(p), "L")==0){
+    else if(strcmp(getFace(p), "Face.L")==0 || strcmp(getFace(p), "L")==0|| strcmp(getFace(p),"Face.E")==0 || strcmp(getFace(p),"E")==0){
         x = getXQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
-    else if(strcmp(getFace(p), "Face.O")==0 || strcmp(getFace(p), "O")==0){
+    else if(strcmp(getFace(p), "Face.O")==0 || strcmp(getFace(p), "O")==0 || strcmp(getFace(p),"Face.W")==0 || strcmp(getFace(p),"W")==0){
         x = getXQuadra(q) + getWQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
@@ -95,11 +95,11 @@ void insere_dspj_svg(FILE* svg, Quadra q, Pessoa p){
         x = getXQuadra(q) + getNum(p);
         y = getYQuadra(q);
     }
-    else if(strcmp(getFace(p), "Face.L")==0 || strcmp(getFace(p), "L")==0){
+    else if(strcmp(getFace(p), "Face.L")==0 || strcmp(getFace(p), "L")==0 || strcmp(getFace(p),"Face.E")==0 || strcmp(getFace(p),"E")==0){
         x = getXQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }
-    else if(strcmp(getFace(p), "Face.O")==0 || strcmp(getFace(p), "O")==0){
+    else if(strcmp(getFace(p), "Face.O")==0 || strcmp(getFace(p), "O")==0 || strcmp(getFace(p),"Face.W")==0 || strcmp(getFace(p),"W")==0){
         x = getXQuadra(q) + getWQuadra(q);
         y = getYQuadra(q) + getNum(p);
     }

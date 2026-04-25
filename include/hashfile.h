@@ -58,8 +58,9 @@ int remover_registro(Hashfile hf, char* chave_removida);
 /// @param e O estilo das quadras
 void desenha_quadras_svg(Hashfile* hf_quadra, FILE* svg, Estilo e);
 
-void testar_qtd_pessoas(Hashfile* hf_pessoa);
-
-void testar_qtd_quadras(Hashfile* hf_quadra);
+/// @brief Cria um arquivo de dump para um determinado hashfile
+/// @param hf_ptr O hashfile que tera o dump criado
+/// @param nome_arquivo_hfd Nome com extensao do arquivo de dump que sera criado
+void gerar_dump_hfd(Hashfile* hf_ptr, char* nome_arquivo_hfd);
 
 #endif

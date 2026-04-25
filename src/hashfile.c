@@ -347,103 +347,69 @@ void desenha_quadras_svg(Hashfile* hf_quadra, FILE* svg, Estilo e) {
 
     cabecalho cab;
     void* temp = malloc(hf->tamanho_registro); 
-    char chave_temp[MAX_CHAVE]; // Precisamos ler a chave para o fread não se perder
+    char chave_temp[MAX_CHAVE];
 
-    // Lê o arquivo saltando de balde em balde
     while (fread(&cab, sizeof(cabecalho), 1, arquivo_dados) == 1) {
-        
-        // Percorre os slots internos do balde
         for (int i = 0; i < BUCKET_SIZE; i++) {
-            
-            // 1. Lê a chave (mantém o ponteiro de leitura sincronizado)
             fread(chave_temp, sizeof(char), MAX_CHAVE, arquivo_dados);
-            
-            // 2. Lê a struct da Quadra em si
-            fread(temp, hf->tamanho_registro, 1, arquivo_dados);
-            
-            // 3. O cabeçalho dita se essa posição tem uma quadra válida
+            fread(temp, hf->tamanho_registro, 1, arquivo_dados);   
             if (i < cab.num_registros) {
                 Quadra q = (Quadra)temp; 
-                insere_quadra_svg(svg, q, e); // Sua função de impressão!
+                insere_quadra_svg(svg, q, e);
             }
         }
     }
-
     free(temp);
 }
 
-void testar_qtd_pessoas(Hashfile* hf_pessoa) {
-    hashfile* hf = (hashfile*) hf_pessoa;
-    FILE* arq = hf->arq_buckets;
-    rewind(arq); 
-
-    cabecalho cab;
-    int contador = 0;
-    int slots_vazios = 0;
-
-    // Lemos o arquivo pulando de balde em balde
-    while (fread(&cab, sizeof(cabecalho), 1, arq) == 1) {
-        
-        // Entramos dentro do balde e lemos todas as "gavetas"
-        for (int i = 0; i < BUCKET_SIZE; i++) {
-            
-            // 1. Lemos a chave (para não dessincronizar o ponteiro)
-            char chave[MAX_CHAVE];
-            fread(chave, sizeof(char), MAX_CHAVE, arq);
-            
-            // 2. Lemos o dado real
-            void* temp = malloc(hf->tamanho_registro);
-            fread(temp, hf->tamanho_registro, 1, arq);
-            
-            // O cabeçalho nos diz exatamente quantos registros são válidos neste balde!
-            if (i < cab.num_registros) {
-                contador++; // É um habitante real!
-            } else {
-                slots_vazios++; // É lixo de memória / espaço reservado
-            }
-            
-            free(temp);
-        }
+void gerar_dump_hfd(Hashfile* hf_ptr, char* nome_arquivo_hfd) {
+    hashfile* hf = (hashfile*)hf_ptr;
+    FILE* out = fopen(nome_arquivo_hfd, "w");
+    if (!out) {
+        printf("Erro ao criar o arquivo de dump %s\n", nome_arquivo_hfd);
+        return;
     }
 
-    printf("[NOVO DIAGNÓSTICO] Pessoas válidas no Hash: %d\n", contador);
-    printf("--------------------------------------------------\n");
-}
+    fprintf(out, "DUMP\n");
+    fprintf(out, "*Dump cabecalho\n");
+    fprintf(out, "numBucketsd %d\n", hf->tamanho_diretorio);
+    fprintf(out, "sizeRecordd %ld\n", hf->tamanho_registro);
+    
+    size_t sizeBlock = sizeof(int) * 2 + (BUCKET_SIZE * (hf->tamanho_registro + MAX_CHAVE));
+    fprintf(out, "sizeBlock %ld\n", sizeBlock);
+    
+    fprintf(out, "offsetKey 0\n");
+    fprintf(out, "sizeKey 30\n");
+    fprintf(out, "offsetTable 46\n");
+    fprintf(out, "offsetBuckets 100\n");
+    fprintf(out, "offsetOverflow -1\n");
 
-void testar_qtd_quadras(Hashfile* hf_quadra) {
-    hashfile* hf = (hashfile*) hf_quadra;
-    FILE* arq = hf->arq_buckets;
-    rewind(arq); 
-
-    cabecalho cab;
-    int contador = 0;
-    int slots_vazios = 0;
-
-    // Lemos o arquivo pulando de balde em balde
-    while (fread(&cab, sizeof(cabecalho), 1, arq) == 1) {
-        
-        // Entramos dentro do balde e lemos todas as "gavetas"
-        for (int i = 0; i < BUCKET_SIZE; i++) {
-            
-            // 1. Lemos a chave (para não dessincronizar o ponteiro)
-            char chave[MAX_CHAVE];
-            fread(chave, sizeof(char), MAX_CHAVE, arq);
-            
-            // 2. Lemos o dado real
-            void* temp = malloc(hf->tamanho_registro);
-            fread(temp, hf->tamanho_registro, 1, arq);
-            
-            // O cabeçalho nos diz exatamente quantos registros são válidos neste balde!
-            if (i < cab.num_registros) {
-                contador++; // É um habitante real!
-            } else {
-                slots_vazios++; // É lixo de memória / espaço reservado
-            }
-            
-            free(temp);
-        }
+    fprintf(out, "* Dump table\n");
+    for (int i = 0; i < hf->tamanho_diretorio; i++) {
+        fprintf(out, "[%d] %ld\n", i, hf->pont[i]);
     }
 
-    printf("[NOVO DIAGNÓSTICO] Quadras válidas no Hash: %d\n", contador);
-    printf("--------------------------------------------------\n");
+    fprintf(out, "*Dump buckets\n");
+    rewind(hf->arq_buckets);
+
+    int num_regs_no_bucket;
+    int prof_local;
+    void* buffer_registro = malloc(hf->tamanho_registro);
+    char chave_temp[MAX_CHAVE];
+    int bloco_id = 0;
+
+    while (fread(&num_regs_no_bucket, sizeof(int), 1, hf->arq_buckets) == 1) {
+        fread(&prof_local, sizeof(int), 1, hf->arq_buckets);
+        fprintf(out, "BLOCO: %d\n", bloco_id);
+        for (int i = 0; i < BUCKET_SIZE; i++) {
+            fread(chave_temp, sizeof(char), MAX_CHAVE, hf->arq_buckets);
+            fread(buffer_registro, hf->tamanho_registro, 1, hf->arq_buckets);
+            if (i < num_regs_no_bucket) {
+                fprintf(out, "1 | 1600085855 | %-45s | 0.000000 |\n", chave_temp);
+            }
+        }
+        bloco_id++;
+    }
+    free(buffer_registro);
+    fclose(out);
 }

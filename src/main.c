@@ -154,9 +154,6 @@ int main(int argc, char* argv[]) {
         lePm(pm, hf_pessoa, hf_ceps, txt, &total_hab, &total_mor, &total_hom, &total_mul, &mor_hom, &mor_mul);
     }
 
-    testar_qtd_quadras(hf_quadra);
-    testar_qtd_pessoas(hf_pessoa);
-
     if (qry != NULL && svgQry != NULL && txt != NULL) {
         startSVG(svgQry, max_x, max_y);
         leQry(qry, hf_quadra, hf_pessoa, hf_ceps, svgQry, txt, &total_hab, &total_mor, &total_hom, &total_mul, &mor_hom, &mor_mul);
@@ -164,9 +161,9 @@ int main(int argc, char* argv[]) {
         fechasvg(svgQry);
     }
 
-    testar_qtd_quadras(hf_quadra);
-    testar_qtd_pessoas(hf_pessoa);
-    printf("Total de pessoas pelo contador: %d\n",total_hab);
+    gerar_dump_hfd(hf_quadra, "quadras.hfd");
+    gerar_dump_hfd(hf_pessoa, "pessoas.hfd");
+    gerar_dump_hfd(hf_ceps, "ceps.hfd");
 
     if (geo) fclose(geo);
     if (svgGeo) fclose(svgGeo);
