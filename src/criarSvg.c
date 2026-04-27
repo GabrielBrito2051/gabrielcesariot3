@@ -6,7 +6,7 @@
 
 void startSVG(FILE* svg, int max_x, int max_y){
     if(max_x == 0 && max_y == 0){
-         fprintf(svg, "<svg viewBox=\"0 0 10000 10000\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+         fprintf(svg, "<svg viewBox=\"0 0 12000 12000\" xmlns=\"http://www.w3.org/2000/svg\">\n");
     }else{
         fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", max_x + 51, max_y + 51);
     }
