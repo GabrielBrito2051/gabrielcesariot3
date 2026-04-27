@@ -10,7 +10,18 @@
 typedef void* Pessoa;
 
 /*
-    Arquivo .h relacionado a uma pessoa, com funcoes de criar e remover uma pessoa, getters e setters
+    Uma pessoa e um habitante da cidade de bitnopolis, que pode ou nao ser um morador. A pessoa possui um cpf, nome, sobrenome, sexo e
+    data de nascimento. Caso ela seja morador, possui tambem cep, face, numero e complemento.
+    
+    Os valores de cpf, nome, sobrenome, data de nascimento, cep e complemento possuem qunatidades maximas de caracteres, que sao,
+    respectivamente: 20, 100, 100, 12, 12 e 30.
+
+    Para criar uma pessoa nova, utiliza-se a funcao nascimento(), que aloca memoria para uma nova pessoa. Para criar essa pessoa, 
+    e preciso informar o cpf, nome, sobrenome, seco e data de nascimento, retornando assim uma nova pessoa.
+
+    Existem funcoes getters e setters para obter e modificar as informacoes de uma pessoa.
+
+    Finalmente, para finalizar com uma pessoa, existe a funcao rip(), que libera a memoria da pessoa especificada.
 */
 
 /// @brief Cria uma nova pessoa

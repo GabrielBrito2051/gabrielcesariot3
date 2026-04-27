@@ -8,7 +8,7 @@ typedef void* Hashfile;
 
 /*
     Um hashfile extensivel e um arquivo binario que grava informacoes em disco, podendo ser expandido conforme necessario para
-    reduzir o tempo gasto ao buscar informacoes gravadas.
+    reduzir o tempo gasto ao buscar informacoes gravadas. 
 
     Um novo hashfle pode ser criado a partir da funcao inicializar_hashfile(), que cria dois arquivos distintos (.hf e .hfc). Para
     inicializar o hashfile, e necessario passar como parametro o tamanho das informacoes que vao ser guardadas. Cada hashfile 
@@ -18,6 +18,9 @@ typedef void* Hashfile;
     Informacoes podem ser gravadas, buscadas e removidas dentro do hashfile atraves das funcoes inserir_registro(),
     buscar_registro(), e remover_registro(), respectivamente. A chave utilizada para insercao e remocao consiste em uma string 
     alfanumerica, podendo conter no maximo 30 bytes.
+
+    Tambem e possivel gerar arquivos de dump (.hfd) de hashfiles utilizando a funcao gerar_dump_hfd(). Esse arquivos guardam
+    informacoes legiveis dos hashfiles existentes (que normalmente estao em binario).
 
     O hashfile pode ser fechado a partir da funcao fechar_hashfile(), e as informacoes permanecem gravadas nos arquivos .hf e .hfc.
 */

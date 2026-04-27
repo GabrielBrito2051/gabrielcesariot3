@@ -8,10 +8,14 @@
 #include "../include/pessoa.h"
 
 /*
+    Esse modulo trata de arquivos .txt. Um arquivo .txt e um arquivo de texto que, nesse caso, guarda o log de informacoes dos comandos
+    lidos no arquivo .qry.
 
+    Nesse arquivo, e possivel inserir o cpf e o nome de pessoas que viraram sem-teto, inserir o censo da cidade, inserir o resultado da
+    busca de um determinado morador, informar a morte de um habitante e insrir as informacoes de um despejo.
 */
 
-/// @brief Imprime o cpf e o nome do moradore que virou sem-teto
+/// @brief Imprime o cpf e o nome do morador que virou sem-teto
 /// @param txt Ponteiro para o arquivo txt
 /// @param p A pessoa
 void print_rq_txt(FILE* txt, Pessoa p);

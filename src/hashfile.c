@@ -174,19 +174,6 @@ int inserir_registro(Hashfile hf_ptr, char* chave, void* dado) {
 
     unsigned int hash_val = calcular_hash(chave);
 
-    if (hf->profundidade_global > 20) {
-        printf("\n[ERRO FATAL] Loop infinito detectado no Hashing Extensível.\n");
-        printf("A chave causadora é: '%s' | Valor do Hash: %u\n", chave, hash_val);
-        
-        printf("Qual Tabela travou? -> Tamanho do registro: %zu ", hf->tamanho_registro);
-        if (hf->tamanho_registro == 48) printf("(Tabela de QUADRAS)\n");
-        else if (hf->tamanho_registro == 284) printf("(Tabela de PESSOAS)\n");
-        else if (hf->tamanho_registro == 8208) printf("(Tabela de INDICE)\n");
-        else printf("(Tabela Desconhecida)\n");
-        
-        exit(1); 
-    }
-
     int mascara = (1 << hf->profundidade_global) - 1;
     int indice_dir = hash_val & mascara;
     

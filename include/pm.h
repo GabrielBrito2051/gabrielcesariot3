@@ -8,7 +8,11 @@
 #include "../include/hashfile.h"
 
 /*
+    Esse modulo cuida da funcao de ler o arquivo de pessoas .pm.
 
+    A funcao lePm le as linhas do arquivo .pm e vai criando e armazenando os objetos de acordo com o que e lido. Possui 6 variaveis
+    passadas como referencias que armazenam o total de habitantes, total de moradores, total de habitantes homens, total de habitantes
+    mulheres, total de moradores homens e total de moradores mulheres.
 */
 
 /// @brief Le o arquivo .pm e insere os dados no hashfile

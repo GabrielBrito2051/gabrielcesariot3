@@ -8,7 +8,12 @@
 #include "../include/hashfile.h"
 
 /*
-    
+    Esse modulo cuida da funcao de ler um arquivo de quadras .geo.
+
+    A funcao leGeo le as linhas do arquivo .geo e vai criando e aramazenando os objetos lidos. Possui duas variaveis que sao passadas
+    como referencia que armazenam as maiores coordenadas x e y das quadras.
+
+    Alem disso, essa funcao insere os objetos criados num arquivo .svg.
 */
 
 /// @brief Le o arquivo .geo e insere os dados no hashfile

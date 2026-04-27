@@ -9,7 +9,14 @@
 #include "../include/quadra.h"
 
 /*
+    Esse modulo cuida da funcao de ler o arquivo de comandos .qry.
 
+    A funcao leQry le as linhas do arquivo .qry e realiza os comandos que sao lidos em cada linha. Para os comandos, sao necessarias 6
+    variaveis que guardam o total de habitantes, total de moradores, total de habitantes homens, total de habitantes mulheres, total de
+    moradores homens e total de moradores mulheres.
+
+    Alem disso, essa funcao tambem insere as informacoes do que esta ocorrendo nos comandos em arquivos de texto e tambem em
+    arquivos .svg.
 */
 
 /// @brief Faz a leitura do arquivo .qry

@@ -14,7 +14,24 @@ typedef void* Estilo;
 typedef void* IndiceCep;
 
 /*
+    Uma quadra e um local onde os habitantes de bitnopolis podem morar. A quadra possui um cep, coordenadas x e y, comprimento e 
+    largura.As quadras possuem um estilo, que e utilizado para a impressao delas no arquivo .svg. O estilo guarda as informacoes
+    de sw, fill e strk. Existe tambem o indice de ceps, que guarda a qunatidade de moradores em uma determinada quadra.
 
+    O cep possui uma quantidade maxima de caracteres, sendo ela 12. O sw possui uma quantidade maxima de caracteres de 8, e o fill e strk
+    uma quantidade maxima de 30 caracteres. O indice de ceps pode armazenar no maximo 512 moradores por quadra.
+
+    Para criar uma quadra, utiliza-se a funcao criar_quadra(), que aloca memoria para uma nova quadra. Para criar essa quadra, e
+    necessario informar o cep, coordenadas x e y, largura e comprimento. Para criar um estilo, utiliza-se a funcao criar_estilo(). Que
+    aloca memoria para um novo estilo de texto. Para realizar essa criacao, e necessario informar o sw, fill e strk. O mesmo vale para
+    um indice de ceps, que, para ser criado, utiliza-se a funcao criar_indice_cep(), que aloca memoria para um novo indice de ceps. Para
+    essa criacao, diferentemente das outras, nao e necessario informacoes, visto que o indice inicia-se vazio.
+    
+    Para cada um desses objetos descritos, existem funcoes getter e setters para obter e modificar suas informacoes.
+
+    Finalmente, para remover uma quadra, utiliza-se a funcao liberar_quadra(), que, como o nome sugere, libera a memoria de uma quadra.
+    Para liberar a memoria do estilo das quadras, utiliza-se a funcao removerEstilo(), e para remover um inidce de ceps, utiliza-se a 
+    funcao free_indice_cep().
 */
 
 /// @brief Cria uma nova quadra
